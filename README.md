@@ -1,3 +1,3 @@
 # pl-bench
 
-A collection of useless benchmarks from various programming languages.
+A collection of nonsense benchmarks for various programming languages.
