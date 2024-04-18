@@ -4,6 +4,7 @@ import "core:fmt"
 
 main :: proc() {
 	x := get_primes(25_000)
+	defer delete(x)
 	fmt.println("Odin:", len(x))
 }
 

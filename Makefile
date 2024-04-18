@@ -1,7 +1,8 @@
-build-all: build-fib build-prime
+build-all: build-fib build-prime build-multithreading
 
 clean:
 	rm -rf build/*
+	rm -rf benchmarks/multithreading/rust/target*
 
 # FIB
 build-fib: build/fib/go.exe build/fib/odin.exe build/fib/rust.exe build/fib/v.exe
@@ -32,3 +33,20 @@ build/prime/rust.exe: benchmarks/prime/prime.rs
 
 build/prime/v.exe: benchmarks/prime/prime.v
 	v -prod -o build/prime/v.exe benchmarks/prime/prime.v
+
+# MULTITHREADING
+build-multithreading: build/multithreading/go.exe build/multithreading/odin.exe build/multithreading/rust.exe build/multithreading/v.exe
+
+build/multithreading/go.exe: benchmarks/multithreading/multithreading.go
+	go build -o build/multithreading/go.exe benchmarks/multithreading/multithreading.go
+
+build/multithreading/odin.exe: benchmarks/multithreading/multithreading.odin
+	odin build benchmarks/multithreading/multithreading.odin -file -out:build/multithreading/odin.exe -o:speed
+
+build/multithreading/rust.exe: benchmarks/multithreading/rust/src/main.rs
+	cargo build --manifest-path=benchmarks/multithreading/rust/Cargo.toml --release
+	test -d build/multithreading || mkdir build/multithreading
+	mv benchmarks/multithreading/rust/target/release/multithreading.exe* build/multithreading/rust.exe
+
+build/multithreading/v.exe: benchmarks/multithreading/multithreading.v
+	v -prod -cc msvc -o build/multithreading/v.exe benchmarks/multithreading/multithreading.v
