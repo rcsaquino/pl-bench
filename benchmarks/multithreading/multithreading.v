@@ -7,11 +7,12 @@ fn main() {
 	possible_answers := json.decode([]string, os.read_file('benchmarks/multithreading/db_words/wordle_min.json')!)!
 
 	mut score_index := []int{len: possible_answers.len, init: 0}
-	thread_count := runtime.nr_cpus() - 2 // For some reason V runs a lot slower when using all threads. Maybe because of GC?
+	thread_count := runtime.nr_cpus()
 	chunk_size := int(math.ceil(f64(possible_answers.len) / f64(thread_count)))
 
 	ch := chan []int{}
 
+	gc_disable() // Temporarily disable GC
 	for chunk in 0 .. thread_count {
 		from := chunk_size * chunk
 		to := if (from + chunk_size) > possible_answers.len {
@@ -30,6 +31,9 @@ fn main() {
 		}
 	}
 	ch.close()
+
+	gc_enable() // Re-enable GC then explicitly collect
+	gc_collect()
 
 	mut sorted_scores := score_index.clone()
 	sorted_scores.sort(a > b)
