@@ -58,7 +58,7 @@ main :: proc() {
 	score_index := make([]int, len(possible_answers))
 	defer delete(score_index)
 	thread_count := 12
-	chunk_size := int(math.ceil(f64(len(possible_answers))) / f64(thread_count))
+	chunk_size := int(math.ceil(f64(len(possible_answers)) / f64(thread_count)))
 
 	threads := make([]^thread.Thread, thread_count)
 	defer {
@@ -75,7 +75,13 @@ main :: proc() {
 			to = len(possible_answers)
 		}
 
-		t := thread.create_and_start_with_poly_data4(possible_answers, from, to, &score_index, add_scores)
+		t := thread.create_and_start_with_poly_data4(
+			possible_answers,
+			from,
+			to,
+			&score_index,
+			add_scores,
+		)
 		threads[chunk] = t
 	}
 	for t in threads {
@@ -101,7 +107,7 @@ main :: proc() {
 	fmt.println(result)
 }
 
-print_mutex := b64(false)
+si_mutex := b64(false)
 
 did_acquire :: proc(m: ^b64) -> (acquired: bool) {
 	res, ok := intrinsics.atomic_compare_exchange_strong(m, false, true)
@@ -113,18 +119,25 @@ add_scores :: proc(possible_answers: []string, from: int, to: int, score_index: 
 		context.allocator = mem.tracking_allocator(&tracker)
 	}
 
+	si_copy := slice.clone(score_index^)
+	defer delete(si_copy)
 	for x in from ..< to {
 		for y in 0 ..< len(possible_answers) {
 			for x_char_index in 0 ..< 5 {
 				x_char := possible_answers[x][x_char_index]
 				if x_char == possible_answers[y][x_char_index] {
-					score_index[y] += 5
+					si_copy[y] += 5
 				} else if strings.contains_rune(possible_answers[y], rune(x_char)) {
-					score_index[y] += 4
+					si_copy[y] += 4
 				}
 			}
 		}
 	}
+	for !did_acquire(&si_mutex) {thread.yield()}
+	for s, i in si_copy {
+		score_index^[i] += s
+	}
+	si_mutex = false
 }
 
 find_index :: proc(arr: []int, value: int) -> int {
