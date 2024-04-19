@@ -2,13 +2,41 @@ package main
 
 import "core:encoding/json"
 import "core:fmt"
+import "core:intrinsics"
 import "core:math"
+import "core:mem"
 import "core:os"
 import "core:slice"
 import "core:strings"
 import "core:thread"
 
+when ODIN_DEBUG {
+	tracker: mem.Tracking_Allocator
+}
+
 main :: proc() {
+	when ODIN_DEBUG {
+		fmt.println("Odin Leak Checker Enabled!")
+		mem.tracking_allocator_init(&tracker, context.allocator)
+		context.allocator = mem.tracking_allocator(&tracker)
+
+		defer {
+			total_mem := 0.0
+			fmt.printf("\n=== %v allocations not freed: ===\n", len(tracker.allocation_map))
+			for _, entry in tracker.allocation_map {
+				total_mem += f64(entry.size)
+				fmt.printf("LEAK: %v bytes @ %v\n", entry.size, entry.location)
+			}
+			fmt.printf("\n=== %v incorrect frees: ===\n", len(tracker.bad_free_array))
+			for entry in tracker.bad_free_array {
+				fmt.printf("BAD FREE: %p @ %v\n", entry.memory, entry.location)
+			}
+			mem.tracking_allocator_destroy(&tracker)
+			fmt.printfln("\nTotal memory leak: %.2f kb\n", total_mem / 1000)
+		}
+	}
+
+
 	data, ok := os.read_entire_file("benchmarks/multithreading/db_words/wordle_min.json")
 	defer delete(data)
 	if !ok {
@@ -47,12 +75,7 @@ main :: proc() {
 			to = len(possible_answers)
 		}
 
-		t := thread.create(add_scores)
-		t.user_args[0] = &possible_answers
-		t.user_args[1] = &score_index
-		t.user_args[2] = &from
-		t.user_args[3] = &to
-		thread.start(t)
+		t := thread.create_and_start_with_poly_data4(possible_answers, from, to, &score_index, add_scores)
 		threads[chunk] = t
 	}
 	for t in threads {
@@ -64,9 +87,13 @@ main :: proc() {
 	slice.reverse_sort(score_index)
 	output: [6]string
 	output[0] = fmt.tprint("Odin: ")
-	for i in 1 ..< len(output) {
+	for i in 0 ..< 5 {
 		score := score_index[i]
-		output[i] = fmt.tprintf("%v: %v | ", possible_answers[find_index(index_ref, score)], score)
+		output[i + 1] = fmt.tprintf(
+			"%v: %v | ",
+			possible_answers[find_index(index_ref, score)],
+			score,
+		)
 	}
 	result := strings.concatenate(output[:])
 	defer delete(result)
@@ -74,11 +101,18 @@ main :: proc() {
 	fmt.println(result)
 }
 
-add_scores :: proc(t: ^thread.Thread) {
-	possible_answers := (^[]string)(t.user_args[0])^
-	score_index := (^[]int)(t.user_args[1])^
-	from := (^int)(t.user_args[2])^
-	to := (^int)(t.user_args[3])^
+print_mutex := b64(false)
+
+did_acquire :: proc(m: ^b64) -> (acquired: bool) {
+	res, ok := intrinsics.atomic_compare_exchange_strong(m, false, true)
+	return ok && res == false
+}
+
+add_scores :: proc(possible_answers: []string, from: int, to: int, score_index: ^[]int) {
+	when ODIN_DEBUG {
+		context.allocator = mem.tracking_allocator(&tracker)
+	}
+
 	for x in from ..< to {
 		for y in 0 ..< len(possible_answers) {
 			for x_char_index in 0 ..< 5 {
