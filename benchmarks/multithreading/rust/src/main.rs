@@ -13,8 +13,9 @@ fn main() {
 
     let thread_count = available_parallelism().unwrap().get();
     let chunk_size: usize = (possible_answers.len() as f64 / thread_count as f64).ceil() as usize;
+    let possible_answers = possible_answers.clone();
 
-    let rx = {
+    let rx_main = {
         let (tx, rx) = mpsc::channel();
         for chunk in 0..thread_count {
             let from = chunk_size * chunk;
@@ -45,29 +46,29 @@ fn main() {
                 tx.send(priority_index).unwrap();
             });
         }
-        rx
+
+        rx //return
     };
 
-    for r in rx {
+    for r in rx_main {
         for (i, prio) in r.iter().enumerate() {
             priority_index[i] += prio;
         }
     }
 
-    let mut word_hash_vec = possible_answers
-        .clone()
-        .into_iter()
-        .zip(priority_index.into_iter())
-        .collect::<Vec<(String, u32)>>();
+    let reference_index = priority_index.clone();
 
-    word_hash_vec.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+    priority_index.sort_by(|a, b| b.partial_cmp(a).unwrap());
 
-    println!(
-        "Rust: {:?}",
-        &word_hash_vec[if possible_answers.len() >= 5 {
-            0..5
-        } else {
-            0..possible_answers.len()
-        }]
-    );
+    let mut result = String::from("Rust: ");
+    for i in 0..5 {
+        let score = priority_index[i];
+        let index = reference_index
+            .iter()
+            .position(|&x| x == priority_index[i])
+            .unwrap();
+        result.push_str(format!("{}: {} | ", possible_answers[index], score).as_str());
+    }
+
+    println!("{}", result);
 }
