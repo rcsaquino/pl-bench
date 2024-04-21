@@ -7,7 +7,6 @@ import (
 	"os"
 	"runtime"
 	"sort"
-	"strings"
 	"sync"
 )
 
@@ -39,7 +38,7 @@ func main() {
 						x_char := possible_answers[x][x_char_index]
 						if x_char == possible_answers[y][x_char_index] {
 							si[y] += 5
-						} else if strings.Contains(possible_answers[y], string(x_char)) {
+						} else if contains_byte(possible_answers[y], x_char) {
 							si[y] += 4
 						}
 					}
@@ -89,4 +88,13 @@ func find_index(arr []int, value int) int {
 		}
 	}
 	return index
+}
+
+func contains_byte(s string, b byte) bool {
+	for i := 0; i < len(s); i++ {
+		if s[i] == b {
+			return true
+		}
+	}
+	return false
 }

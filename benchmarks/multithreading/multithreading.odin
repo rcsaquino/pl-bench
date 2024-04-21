@@ -127,7 +127,7 @@ add_scores :: proc(possible_answers: []string, from: int, to: int, score_index: 
 				x_char := possible_answers[x][x_char_index]
 				if x_char == possible_answers[y][x_char_index] {
 					si_copy[y] += 5
-				} else if strings.contains_rune(possible_answers[y], rune(x_char)) {
+				} else if contains_u8(possible_answers[y], x_char) {
 					si_copy[y] += 4
 				}
 			}
@@ -147,4 +147,13 @@ find_index :: proc(arr: []int, value: int) -> int {
 		}
 	}
 	return -1
+}
+
+contains_u8 :: proc(s: string, c: u8) -> bool {
+	for i := 0; i < len(s); i += 1 {
+		if s[i] == c {
+			return true
+		}
+	}
+	return false
 }
