@@ -12,9 +12,9 @@ go build -o build/prime/go.exe benchmarks/prime/prime.go
 go build -o build/multithreading/go.exe benchmarks/multithreading/multithreading.go
 
 echo Building odin executables ...
-odin build benchmarks/fib/fib.odin -file -out:build/fib/odin.exe -o:speed
-odin build benchmarks/prime/prime.odin -file -out:build/prime/odin.exe -o:speed
-odin build benchmarks/multithreading/multithreading.odin -file -out:build/multithreading/odin.exe -o:speed
+odin build benchmarks/fib/fib.odin -file -out:build/fib/odin.exe -o:aggressive
+odin build benchmarks/prime/prime.odin -file -out:build/prime/odin.exe -o:aggressive
+odin build benchmarks/multithreading/multithreading.odin -file -out:build/multithreading/odin.exe -o:aggressive
 
 echo Building rust executables ...
 rustc -C opt-level=3 -o build/fib/rust.exe benchmarks/fib/fib.rs
