@@ -2,7 +2,7 @@ package main
 
 import "core:encoding/json"
 import "core:fmt"
-import "core:intrinsics"
+import "base:intrinsics"
 import "core:math"
 import "core:mem"
 import "core:os"
