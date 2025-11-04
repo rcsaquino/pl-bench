@@ -12,9 +12,9 @@ go build -o build/prime/go.exe benchmarks/prime/prime.go
 go build -o build/multithreading/go.exe benchmarks/multithreading/multithreading.go
 
 echo Building odin executables ...
-odin build benchmarks/fib/fib.odin -file -out:build/fib/odin.exe -o:aggressive
-odin build benchmarks/prime/prime.odin -file -out:build/prime/odin.exe -o:aggressive
-odin build benchmarks/multithreading/multithreading.odin -file -out:build/multithreading/odin.exe -o:aggressive
+odin build benchmarks/fib/fib.odin -file -out:build/fib/odin.exe -o:aggressive -vet -strict-style -source-code-locations:obfuscated -disable-assert -no-bounds-check -microarch:native
+odin build benchmarks/prime/prime.odin -file -out:build/prime/odin.exe -o:aggressive -vet -strict-style -source-code-locations:obfuscated -disable-assert -no-bounds-check -microarch:native
+odin build benchmarks/multithreading/multithreading.odin -file -out:build/multithreading/odin.exe -o:aggressive -vet -strict-style -source-code-locations:obfuscated -disable-assert -no-bounds-check -microarch:native
 
 echo Building rust executables ...
 rustc -C opt-level=3 -o build/fib/rust.exe benchmarks/fib/fib.rs
@@ -36,12 +36,50 @@ v -prod -o build/multithreading/v-msvc.exe -cc msvc benchmarks/multithreading/mu
 echo ===============================
 
 echo Starting fib benchmark...
-call bat/fib.bat
+echo ===============================
+"build\fib\go.exe"
+node benchmarks\fib\fib.js
+"build\fib\odin.exe"
+"build\fib\rust.exe"
+"build\fib\v-gcc.exe"
+echo ===============================
+echo.
+echo ===== FIB BENCHMARK START =====
+echo.
+hyperfine -w 3 "build\fib\go.exe" "node benchmarks\fib\fib.js" "build\fib\odin.exe" "build\fib\rust.exe" "build\fib\v-gcc.exe" "build\fib\v-msvc.exe"
+echo.
+echo ====== FIB BENCHMARK END ======
+echo.
 
 echo Starting prime benchmark...
-call bat/prime.bat
+echo ===============================
+"build\prime\go.exe"
+node benchmarks\prime\prime.js
+"build\prime\odin.exe"
+"build\prime\rust.exe"
+"build\prime\v-gcc.exe"
+echo ===============================
+echo.
+echo ===== PRIME BENCHMARK START =====
+echo.
+hyperfine -w 3 "build\prime\go.exe" "node benchmarks\prime\prime.js" "build\prime\odin.exe" "build\prime\rust.exe" "build\prime\v-gcc.exe" "build\prime\v-msvc.exe"
+echo.
+echo ===== PRIME BENCHMARK END =====
+echo.
 
 echo Starting multithreading benchmark...
-call bat/multithreading.bat
+echo ===============================
+"build\multithreading\go.exe"
+"build\multithreading\odin.exe"
+"build\multithreading\rust.exe"
+"build\multithreading\v-gcc.exe"
+echo ===============================
+echo.
+echo ===== MULTITHREADING BENCHMARK START =====
+echo.
+hyperfine -w 3 "build\multithreading\go.exe" "build\multithreading\odin.exe" "build\multithreading\rust.exe" "build\multithreading\v-gcc.exe" "build\multithreading\v-msvc.exe"
+echo.
+echo ===== MULTITHREADING BENCHMARK END =====
+echo.
 
 pause

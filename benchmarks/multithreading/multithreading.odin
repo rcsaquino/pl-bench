@@ -1,8 +1,8 @@
 package main
 
+import "base:intrinsics"
 import "core:encoding/json"
 import "core:fmt"
-import "base:intrinsics"
 import "core:math"
 import "core:mem"
 import "core:os"
@@ -13,6 +13,8 @@ import "core:thread"
 when ODIN_DEBUG {
 	tracker: mem.Tracking_Allocator
 }
+
+_ :: mem
 
 main :: proc() {
 	when ODIN_DEBUG {
