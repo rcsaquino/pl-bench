@@ -1,17 +1,17 @@
 const std = @import("std");
 
-fn isPrime(n: usize) bool {
-    var i: usize = 2;
+fn isPrime(n: isize) bool {
+    var i: isize = 2;
     while (i < n) : (i += 1) {
-        if (n % i == 0) return false;
+        if (@rem(n, i) == 0) return false;
     }
     return true;
 }
 
-fn getPrimes(allocator: std.mem.Allocator, n: usize) ![]usize {
-    var primes = try std.ArrayList(usize).initCapacity(allocator, 0);
+fn getPrimes(allocator: std.mem.Allocator, n: isize) ![]isize {
+    var primes = try std.ArrayList(isize).initCapacity(allocator, 0);
 
-    var i: usize = 2;
+    var i: isize = 2;
     while (i < n) : (i += 1) {
         if (isPrime(i)) {
             try primes.append(allocator, i);
@@ -21,9 +21,9 @@ fn getPrimes(allocator: std.mem.Allocator, n: usize) ![]usize {
 }
 
 pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
+    var da = std.heap.DebugAllocator(.{}).init;
+    defer _ = da.deinit();
+    const allocator = da.allocator();
 
     const x = try getPrimes(allocator, 25_000);
     defer allocator.free(x);
