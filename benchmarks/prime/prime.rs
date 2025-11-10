@@ -3,7 +3,7 @@ fn main() {
     println!("Rust: {:?}", primes.len());
 }
 
-fn get_primes(n: i32) -> Vec<i32> {
+fn get_primes(n: isize) -> Vec<isize> {
     let mut primes = Vec::new();
     for i in 2..n {
         if is_prime(i) {
@@ -13,7 +13,7 @@ fn get_primes(n: i32) -> Vec<i32> {
     return primes;
 }
 
-fn is_prime(n: i32) -> bool {
+fn is_prime(n: isize) -> bool {
     for i in 2..n {
         if n % i == 0 {
             return false;
