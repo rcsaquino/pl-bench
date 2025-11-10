@@ -3,7 +3,7 @@ fn main() {
     println!("Rust: {}", x);
 }
 
-fn fib(n: i32) -> i32 {
+fn fib(n: isize) -> isize {
     if n <= 1 {
         return n;
     }
