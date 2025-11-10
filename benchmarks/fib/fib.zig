@@ -1,11 +1,11 @@
 const print = @import("std").debug.print;
 
 pub fn main() void {
-    const x: i32 = fib(35);
+    const x: isize = fib(35);
     print("Zig: {}\n", .{x});
 }
 
-fn fib(n: i32) i32 {
+fn fib(n: isize) isize {
     if (n <= 1) {
         return n;
     }
