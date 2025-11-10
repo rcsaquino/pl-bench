@@ -26,9 +26,9 @@ fn containsByte(s: []const u8, b: u8) bool {
 // -----------------------------
 fn worker(
     possible: []const []const u8, // All possible words
-    from: usize,                  // Starting index for this thread
-    to: usize,                    // Ending index for this thread
-    si: []i32,                    // Output scores (per thread)
+    from: usize, // Starting index for this thread
+    to: usize, // Ending index for this thread
+    si: []i32, // Output scores (per thread)
 ) void {
     var x: usize = from;
     while (x < to) : (x += 1) {
@@ -73,9 +73,9 @@ pub fn main() !void {
     // -----------------------------
     // SETUP MEMORY ALLOCATOR
     // -----------------------------
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
+    var da = std.heap.DebugAllocator(.{}).init;
+    defer _ = da.deinit();
+    const allocator = da.allocator();
 
     // -----------------------------
     // READ JSON WORD LIST FROM FILE
