@@ -51,7 +51,7 @@ echo "==============================="
 echo "Starting fib benchmark..."
 echo "=============================="
 build/fib/go
-node benchmarks/fib/fib.js
+# node benchmarks/fib/fib.js
 bun run benchmarks/fib/fib.js
 build/fib/odin
 build/fib/rust
@@ -62,15 +62,16 @@ build/fib/zig
 echo
 echo "===== FIB BENCHMARK START ====="
 echo
+
 hyperfine -w 3 \
   "build/fib/go" \
-  "node benchmarks/fib/fib.js" \
   "bun run benchmarks/fib/fib.js" \
   "build/fib/odin" \
   "build/fib/rust" \
   "build/fib/v" \
   "build/fib/c" \
   "build/fib/zig"
+# "node benchmarks/fib/fib.js" \
 echo
 echo "====== FIB BENCHMARK END ======"
 echo
@@ -79,7 +80,7 @@ echo
 echo "Starting prime benchmark..."
 echo "=============================="
 build/prime/go
-node benchmarks/prime/prime.js
+# node benchmarks/prime/prime.js
 bun run benchmarks/prime/prime.js
 build/prime/odin
 build/prime/rust
@@ -92,14 +93,13 @@ echo "===== PRIME BENCHMARK START ====="
 echo
 hyperfine -w 3 \
   "build/prime/go" \
-  "node benchmarks/prime/prime.js" \
   "bun run benchmarks/prime/prime.js" \
   "build/prime/odin" \
   "build/prime/rust" \
   "build/prime/v" \
   "build/prime/c" \
   "build/prime/zig"
-
+# "node benchmarks/prime/prime.js"
 echo
 echo "===== PRIME BENCHMARK END ====="
 echo

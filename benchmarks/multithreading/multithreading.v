@@ -12,7 +12,6 @@ fn main() {
 
 	ch := chan []int{}
 
-	gc_disable() // Temporarily disable GC
 	for chunk in 0 .. thread_count {
 		from := chunk_size * chunk
 		to := if (from + chunk_size) > possible_answers.len {
@@ -31,9 +30,6 @@ fn main() {
 		}
 	}
 	ch.close()
-
-	gc_enable() // Re-enable GC then explicitly collect
-	gc_collect()
 
 	mut sorted_scores := score_index.clone()
 	sorted_scores.sort(a > b)
