@@ -18,9 +18,9 @@ go build -o build/prime/go benchmarks/prime/prime.go
 go build -o build/multithreading/go benchmarks/multithreading/multithreading.go
 
 echo "Building Odin executables ..."
-odin build benchmarks/fib/fib.odin -file -out:build/fib/odin -o:aggressive
-odin build benchmarks/prime/prime.odin -file -out:build/prime/odin -o:aggressive
-odin build benchmarks/multithreading/multithreading.odin -file -out:build/multithreading/odin -o:aggressive
+odin build benchmarks/fib/fib.odin -file -out:build/fib/odin -o:aggressive -vet -strict-style -source-code-locations:obfuscated -disable-assert -no-bounds-check
+odin build benchmarks/prime/prime.odin -file -out:build/prime/odin -o:aggressive -vet -strict-style -source-code-locations:obfuscated -disable-assert -no-bounds-check
+odin build benchmarks/multithreading/multithreading.odin -file -out:build/multithreading/odin -o:aggressive -vet -strict-style -source-code-locations:obfuscated -disable-assert -no-bounds-check
 
 echo "Building Rust executables ..."
 rustc -C opt-level=3 -o build/fib/rust benchmarks/fib/fib.rs
