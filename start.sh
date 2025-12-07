@@ -36,6 +36,7 @@ v -prod -o build/multithreading/v benchmarks/multithreading/multithreading.v
 echo "Building C executables ..."
 gcc -O3 -o build/fib/c benchmarks/fib/fib.c
 gcc -O3 -o build/prime/c benchmarks/prime/prime.c
+gcc benchmarks/multithreading/multithreading.c -o build/multithreading/c -O3 -lm -pthread
 
 echo "Building Zig executables ..."
 zig build-exe benchmarks/fib/fib.zig -O ReleaseFast
@@ -112,6 +113,7 @@ build/multithreading/odin
 build/multithreading/rust
 build/multithreading/v
 build/multithreading/zig
+build/multithreading/c
 
 echo
 echo "===== MULTITHREADING BENCHMARK START ====="
@@ -121,7 +123,8 @@ hyperfine -w 3 \
   "build/multithreading/odin" \
   "build/multithreading/rust" \
   "build/multithreading/v" \
-  "build/multithreading/zig"
+  "build/multithreading/zig" \
+  "build/multithreading/c"
 
 echo
 echo "===== MULTITHREADING BENCHMARK END ====="

@@ -10,6 +10,7 @@ import (
 	"sync"
 )
 
+
 func main() {
 	possible_answers := read("benchmarks/multithreading/db_words/wordle_min.json")
 	score_index := make([]int, len(possible_answers))
@@ -21,7 +22,7 @@ func main() {
 	wg.Add(thread_count)
 	ch := make(chan []int, thread_count)
 
-	for chunk := 0; chunk < thread_count; chunk++ {
+	for chunk := range thread_count {
 		from := chunk_size * chunk
 		to := 0
 		if (from + chunk_size) > len(possible_answers) {
@@ -34,7 +35,7 @@ func main() {
 			si := make([]int, len(possible_answers))
 			for x := from; x < to; x++ {
 				for y := range possible_answers {
-					for x_char_index := 0; x_char_index < 5; x_char_index++ {
+					for x_char_index := range 5 {
 						x_char := possible_answers[x][x_char_index]
 						if x_char == possible_answers[y][x_char_index] {
 							si[y] += 5
@@ -61,8 +62,8 @@ func main() {
 	copy(sorted_scores, score_index)
 	sort.Sort(sort.Reverse(sort.IntSlice(sorted_scores)))
 
-	res := fmt.Sprintf("Go: ")
-	for i := 0; i < 5; i++ {
+	res := "Go: "
+	for i := range 5 {
 		score := sorted_scores[i]
 		res += fmt.Sprintf("%v: %v | ", possible_answers[find_index(score_index, score)], score)
 	}
@@ -91,7 +92,7 @@ func find_index(arr []int, value int) int {
 }
 
 func contains_byte(s string, b byte) bool {
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		if s[i] == b {
 			return true
 		}
