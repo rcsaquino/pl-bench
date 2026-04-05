@@ -39,9 +39,9 @@ main :: proc() {
 	}
 
 
-	data, ok := os.read_entire_file("benchmarks/multithreading/db_words/wordle_min.json")
+	data, os_err := os.read_entire_file("benchmarks/multithreading/db_words/wordle_min.json", context.allocator)
 	defer delete(data)
-	if !ok {
+	if os_err != nil {
 		panic("Failed to read file")
 	}
 
@@ -52,8 +52,8 @@ main :: proc() {
 		}
 		delete(possible_answers)
 	}
-	err := json.unmarshal(data, &possible_answers)
-	if err != nil {
+	unmarshal_err := json.unmarshal(data, &possible_answers)
+	if unmarshal_err != nil {
 		panic("Failed to parse json data")
 	}
 
