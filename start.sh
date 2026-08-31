@@ -37,13 +37,13 @@ gcc -O3 -o build/fib/c benchmarks/fib/fib.c
 gcc -O3 -o build/prime/c benchmarks/prime/prime.c
 gcc benchmarks/multithreading/multithreading.c -o build/multithreading/c -O3 -lm -pthread
 
-echo "Building Zig executables ..."
-zig build-exe benchmarks/fib/fib.zig -O ReleaseFast
-mv fib build/fib/zig
-zig build-exe benchmarks/prime/prime.zig -O ReleaseFast
-mv prime build/prime/zig
-zig build-exe benchmarks/multithreading/multithreading.zig -O ReleaseFast
-mv multithreading build/multithreading/zig
+# echo "Building Zig executables ..."
+# zig build-exe benchmarks/fib/fib.zig -O ReleaseFast
+# mv fib build/fib/zig
+# zig build-exe benchmarks/prime/prime.zig -O ReleaseFast
+# mv prime build/prime/zig
+# zig build-exe benchmarks/multithreading/multithreading.zig -O ReleaseFast
+# mv multithreading build/multithreading/zig
 
 echo "==============================="
 
@@ -57,7 +57,7 @@ build/fib/odin
 build/fib/rust
 build/fib/v
 build/fib/c
-build/fib/zig
+# build/fib/zig
 
 echo
 echo "===== FIB BENCHMARK START ====="
@@ -65,13 +65,13 @@ echo
 
 hyperfine -w 3 \
   "build/fib/go" \
+  # "node benchmarks/fib/fib.js" \
   "bun run benchmarks/fib/fib.js" \
   "build/fib/odin" \
   "build/fib/rust" \
   "build/fib/v" \
-  "build/fib/c" \
-  "build/fib/zig"
-# "node benchmarks/fib/fib.js" \
+  "build/fib/c"
+  # "build/fib/zig"
 echo
 echo "====== FIB BENCHMARK END ======"
 echo
@@ -86,20 +86,21 @@ build/prime/odin
 build/prime/rust
 build/prime/v
 build/prime/c
-build/prime/zig
+# build/prime/zig
 
 echo
 echo "===== PRIME BENCHMARK START ====="
 echo
 hyperfine -w 3 \
   "build/prime/go" \
+  # "node benchmarks/prime/prime.js" \
   "bun run benchmarks/prime/prime.js" \
   "build/prime/odin" \
   "build/prime/rust" \
   "build/prime/v" \
-  "build/prime/c" \
-  "build/prime/zig"
-# "node benchmarks/prime/prime.js"
+  "build/prime/c"
+  # "build/prime/zig"
+
 echo
 echo "===== PRIME BENCHMARK END ====="
 echo
@@ -122,8 +123,8 @@ hyperfine -w 3 \
   "build/multithreading/odin" \
   "build/multithreading/rust" \
   "build/multithreading/v" \
-  "build/multithreading/zig" \
-  "build/multithreading/c"
+  "build/multithreading/c" \
+  # "build/multithreading/zig"
 
 echo
 echo "===== MULTITHREADING BENCHMARK END ====="
