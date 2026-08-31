@@ -1,5 +1,4 @@
-#!/usr/bin/env zsh
-source "$HOME/.zshrc"
+#!/usr/bin/env bash
 set -e
 
 echo "===== CLEANING OLD BUILDS ====="
