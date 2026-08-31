@@ -38,7 +38,7 @@ IntVec getPrimes(int n) {
 
 int main(void) {
     IntVec x = getPrimes(25000);
-    printf("Go: %d\n", x.len);
+    printf("C: %d\n", x.len);
     free(x.data);
     return 0;
 }
